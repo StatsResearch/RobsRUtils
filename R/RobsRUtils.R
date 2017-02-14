@@ -532,6 +532,7 @@ GetClearText<-function(encrypted.pw.filename,priv.k)
 #' @param segment.name = 'Type' - the legend title
 #' @param segment.cols = NULL - used to control colours of the segments
 #' @param segment.breaks = NULL - used to control colours of the segments
+#' @param label.size = 4 - used to adjust percent text label size
 #' @return  a ggplot object with your pie chart
 #' @export
 #' @examples
@@ -554,33 +555,35 @@ GetClearText<-function(encrypted.pw.filename,priv.k)
 #' print(p)
 #' }
 #'
-MakePie<-function(type,percent,type.title.str='Title String Here',segment.name='Type',segment.cols=NULL,segment.breaks=NULL)
+MakePie<-function(type,percent,type.title.str='Title String Here',segment.name='Type',segment.cols=NULL,segment.breaks=NULL,label.size=4)
 {
-  # Pie charts, looks tricky but just modify the type and percent lines below
-  # You also might need to mess with the geom_text(colour = ???) if you change
-  # the colours in the scale_fill_manual() line
-
-  df.pie<-data_frame(type,percent)
-  df.pie$pos<-cumsum(percent) - (0.5 * percent)
-
-  p<-ggplot(data=df.pie,aes(x=factor(1),y=percent,fill=type))
-  p<-p+geom_bar(stat = 'identity',width = 1)
-  p<-p+geom_text(aes(y=pos,label = paste0(percent,"%")), colour = 'black', size=4)
-
-  p<-p+coord_polar(theta="y")
-  p<-p+theme(axis.text = element_blank()
-             ,axis.ticks = element_blank()
-             ,panel.grid  = element_blank())
-
-  p<-p+labs(title = type.title.str, x='',y='')
-
-  if(is.null(segment.cols) == FALSE)
-  {
-    p<-p + scale_fill_manual(name=segment.name, breaks=segment.breaks,values = segment.cols )
-  }
-
-  return(p)
+    # Pie charts, looks tricky but just modify the type and percent lines below
+    # You also might need to mess with the geom_text(colour = ???) if you change
+    # the colours in the scale_fill_manual() line
+    
+    df.pie<-data_frame(type,percent)
+    df.pie$pos<-cumsum(percent) - (0.5 * percent)
+    
+    p<-ggplot(data=df.pie,aes(x=factor(1),y=percent,fill=type))
+    p<-p+geom_bar(stat = 'identity',width = 1)
+    p<-p+geom_text(aes(y=pos,label = paste0(percent,"%")), colour = 'black', size=label.size)
+    
+    p<-p+coord_polar(theta="y")
+    p<-p+theme(axis.text = element_blank()
+               ,axis.ticks = element_blank()
+               ,panel.grid  = element_blank())
+    
+    p<-p+labs(title = type.title.str, x='',y='')
+    
+    if(is.null(segment.cols) == FALSE)
+    {
+        p<-p + scale_fill_manual(name=segment.name, breaks=segment.breaks,values = segment.cols )
+    }
+    
+    return(p)
 }
+
+
 
 #' Wrapper function for plotting ggplot2 PDFs
 #' @param plot.filename - the filename for the plot
