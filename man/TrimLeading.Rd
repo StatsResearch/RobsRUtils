@@ -21,4 +21,3 @@ filename<-'  File_1234.json'
 filename.clean<-TrimLeading(filename)
 }
 }
-

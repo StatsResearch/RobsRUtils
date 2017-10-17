@@ -5,7 +5,8 @@
 \title{Utility to make a ggplot pie chart}
 \usage{
 MakePie(type, percent, type.title.str = "Title String Here",
-  segment.name = "Type", segment.cols = NULL, segment.breaks = NULL)
+  segment.name = "Type", segment.cols = NULL, segment.breaks = NULL,
+  label.size = 4)
 }
 \arguments{
 \item{type}{- a character vector of pie segments names}
@@ -19,6 +20,8 @@ MakePie(type, percent, type.title.str = "Title String Here",
 \item{segment.cols}{= NULL - used to control colours of the segments}
 
 \item{segment.breaks}{= NULL - used to control colours of the segments}
+
+\item{label.size}{= 4 - used to adjust percent text label size}
 }
 \value{
 a ggplot object with your pie chart
@@ -47,4 +50,3 @@ print(p)
 }
 
 }
-

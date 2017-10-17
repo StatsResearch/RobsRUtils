@@ -25,4 +25,3 @@ cbp<-GetColourBlindPalette(size=palette.size)
 }
 
 }
-

@@ -19,6 +19,7 @@ The RobsRUtils functions ...
      \item \code{\link{GetPaletteSize}}
      \item \code{\link{MD5_thisFile}}
      \item \code{\link{MakePie}}
+     \item \code{\link{OutputPlotForPaper}}
      \item \code{\link{ProgressDot}}
      \item \code{\link{PlotPDF}}
      \item \code{\link{ProducePlot}}

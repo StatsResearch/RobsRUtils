@@ -23,4 +23,3 @@ cbp<-GetColourBlindPalette(size=33)
 }
 
 }
-

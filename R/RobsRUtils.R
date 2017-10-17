@@ -10,6 +10,7 @@
 #'      \item \code{\link{GetPaletteSize}}
 #'      \item \code{\link{MD5_thisFile}}
 #'      \item \code{\link{MakePie}}
+#'      \item \code{\link{OutputPlotForPaper}}
 #'      \item \code{\link{ProgressDot}}
 #'      \item \code{\link{PlotPDF}}
 #'      \item \code{\link{ProducePlot}}
@@ -622,6 +623,82 @@ ProducePlot<-function(filename,plot.obj,page.size='A4',landscape=TRUE)
   msg<-paste0('PDF plot written to: ',filename)
   return(msg)
 }
+
+#' Wrapper function for plotting ggplot2 graphics
+#' @param plot.folder - where to put the plot
+#' @param plot.filename - the filename for the plot
+#' @param plot.obj - a ggplot2 object
+#' @param plot.width=NULL - used to specify width
+#' @param plot.height=NULL - used to specify height
+#' @param units='in' - inches
+#' @param res=72 - this gives a small file by default
+#' @export
+#' @examples
+#' \dontrun{
+
+#'
+#'x.vals<-c(1,2,3)
+#'y.vals<-c(2,4,6)
+#'plot.data<-data_frame(x.vals,y.vals)
+#'p<-ggplot(data = plot.data,aes(x=x.vals,y=y.vals))
+#'p<-p+geom_line(size=0.5)
+#'p<-p+geom_point(size=2)
+#'titleStr<-'A simple plot'
+#'p<-p+labs(title = titleStr)
+#'
+#'print(p)
+#'
+#'file.name<-'A good file name.pdf'
+#'OutputPlotForPaper(file.name,plot.obj=p)
+#' }
+OutputPlotForPaper<-function(plot.folder='./',filename,plot.obj=NULL,plot.width=NULL,plot.height=NULL,units='in',res = 600)
+{
+    if(is.null(plot.obj))
+    {
+        msg <- 'Nothing to plot'
+        print(msg)
+        return
+    }
+    
+    if(is.null(plot.width))
+    {
+        plot.width<-297/25.4
+    }
+    
+    if(is.null(plot.height))
+    {
+        plot.height<-210/25.4
+    }
+    
+    num.chars <- nchar(filename)
+    plot.type <- stringr::str_to_lower(substr(filename,num.chars-3,num.chars))
+    
+    full.path <- paste0(plot.folder,'/',filename)
+    
+    if(plot.type == '.pdf')
+    {
+        ProducePlot(full.path, plot.obj = plot.obj)
+    }
+    else if (plot.type == '.png')
+    {
+        png(filename = full.path, width = plot.width, height = plot.height, units = 'in',res = res)
+        print(plot.obj)
+        dev.off()
+    }
+    else if (plot.type == '.eps')
+    {
+        postscript(file = full.path, width = plot.width, height = plot.height)
+        print(plot.obj)
+        dev.off()
+    }
+    else
+    {
+        msg <- paste0('Unknown plot.type: ',plot.type)
+        
+        ProducePlot(full.path, plot.obj = plot.obj)
+    }
+}
+
 
 # internal function
 removeFileExtension<-function(filename)

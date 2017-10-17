@@ -36,4 +36,3 @@ encrypted.pw.filename<-EncryptAndSave(clear.pw,key.ring$pub.k)
 }
 
 }
-

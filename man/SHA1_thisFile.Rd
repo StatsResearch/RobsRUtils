@@ -22,4 +22,3 @@ SHA1_thisFile(filename)
 }
 
 }
-

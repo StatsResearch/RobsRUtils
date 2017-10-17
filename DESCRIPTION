@@ -1,7 +1,7 @@
 Package: RobsRUtils
 Type: Package
 Title: Handy utils I have come across
-Version: 1.4.2
+Version: 1.4.3
 Date: 2017-02-05
 Authors@R: person("Rob", "Donald", , "rob@statsresearch.co.uk", role = c("aut", "cre"))
 Description: Handy utils for analysis and plotting
@@ -9,4 +9,4 @@ Depends:
     digest,jsonlite,PKI,tools,ggplot2,dplyr
 License: Open Source Free
 LazyData: TRUE
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

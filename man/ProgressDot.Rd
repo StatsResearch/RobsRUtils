@@ -19,4 +19,3 @@ A text based progress bar
 ProgressDot(count,my.total.loop.size)
 }
 }
-

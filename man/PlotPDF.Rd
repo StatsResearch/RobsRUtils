@@ -28,4 +28,3 @@ PlotPDF(filename,page.size='A3',landscape=FALSE)
 dev.off()
 }
 }
-
