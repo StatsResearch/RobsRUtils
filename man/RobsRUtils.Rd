@@ -6,7 +6,7 @@
 \alias{RobsRUtils-package}
 \title{RobsRUtils: Routines I have found or created along the way}
 \description{
-RobsRUtils: Routines I have found or created along the way
+Build notes: devtools::document(roclets = c('rd','collate','namespace'))
 }
 \section{RobsRUtils functions}{
 
@@ -28,6 +28,7 @@ The RobsRUtils functions ...
      \item \code{\link{TrimLeading}}
      \item \code{\link{TrimTrailing}}
      \item \code{\link{Trim}}
+     \item \code{\link{VerifyMD5}}
    }
 }
 

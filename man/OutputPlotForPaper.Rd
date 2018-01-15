@@ -2,28 +2,28 @@
 % Please edit documentation in R/RobsRUtils.R
 \name{OutputPlotForPaper}
 \alias{OutputPlotForPaper}
-\title{Wrapper function for plotting ggplot2 graphics}
+\title{Wrapper function for plotting ggplot2 in a more general output format}
 \usage{
-OutputPlotForPaper(plot.folder = "./", filename, plot.obj = NULL,
+OutputPlotForPaper(plot.dir, plot.folder, filename, plot.obj = NULL,
   plot.width = NULL, plot.height = NULL, units = "in", res = 600)
 }
 \arguments{
-\item{plot.folder}{- where to put the plot}
+\item{plot.folder}{- output area for the plt}
 
 \item{plot.obj}{- a ggplot2 object}
 
+\item{plot.width}{- used to specify page size}
+
+\item{plot.height}{- used to specify page size}
+
 \item{plot.filename}{- the filename for the plot}
 
-\item{plot.width=NULL}{- used to specify width}
+\item{unit='in'}{- defaults to inches}
 
-\item{plot.height=NULL}{- used to specify height}
-
-\item{units='in'}{- inches}
-
-\item{res=72}{- this gives a small file by default}
+\item{res=600}{used by png output}
 }
 \description{
-Wrapper function for plotting ggplot2 graphics
+Wrapper function for plotting ggplot2 in a more general output format
 }
 \examples{
 \dontrun{
@@ -39,6 +39,7 @@ p<-p+labs(title = titleStr)
 
 print(p)
 
+plot.dir <- './'
 file.name<-'A good file name.pdf'
 OutputPlotForPaper(file.name,plot.obj=p)
 }

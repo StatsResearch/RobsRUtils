@@ -1,5 +1,7 @@
 #' RobsRUtils: Routines I have found or created along the way
 #'
+#' Build notes: devtools::document(roclets = c('rd','collate','namespace'))
+#'
 #' @section RobsRUtils functions:
 #' The RobsRUtils functions ...
 #'    \itemize{
@@ -19,6 +21,7 @@
 #'      \item \code{\link{TrimLeading}}
 #'      \item \code{\link{TrimTrailing}}
 #'      \item \code{\link{Trim}}
+#'      \item \code{\link{VerifyMD5}}
 #'    }
 #' @docType package
 #' @name RobsRUtils
@@ -558,33 +561,31 @@ GetClearText<-function(encrypted.pw.filename,priv.k)
 #'
 MakePie<-function(type,percent,type.title.str='Title String Here',segment.name='Type',segment.cols=NULL,segment.breaks=NULL,label.size=4)
 {
-    # Pie charts, looks tricky but just modify the type and percent lines below
-    # You also might need to mess with the geom_text(colour = ???) if you change
-    # the colours in the scale_fill_manual() line
-    
-    df.pie<-data_frame(type,percent)
-    df.pie$pos<-cumsum(percent) - (0.5 * percent)
-    
-    p<-ggplot(data=df.pie,aes(x=factor(1),y=percent,fill=type))
-    p<-p+geom_bar(stat = 'identity',width = 1)
-    p<-p+geom_text(aes(y=pos,label = paste0(percent,"%")), colour = 'black', size=label.size)
-    
-    p<-p+coord_polar(theta="y")
-    p<-p+theme(axis.text = element_blank()
-               ,axis.ticks = element_blank()
-               ,panel.grid  = element_blank())
-    
-    p<-p+labs(title = type.title.str, x='',y='')
-    
-    if(is.null(segment.cols) == FALSE)
-    {
-        p<-p + scale_fill_manual(name=segment.name, breaks=segment.breaks,values = segment.cols )
-    }
-    
-    return(p)
+  # Pie charts, looks tricky but just modify the type and percent lines below
+  # You also might need to mess with the geom_text(colour = ???) if you change
+  # the colours in the scale_fill_manual() line
+
+  df.pie<-data_frame(type,percent)
+  df.pie$pos<-cumsum(percent) - (0.5 * percent)
+
+  p<-ggplot(data=df.pie,aes(x=factor(1),y=percent,fill=type))
+  p<-p+geom_bar(stat = 'identity',width = 1)
+  p<-p+geom_text(aes(y=pos,label = paste0(percent,"%")), colour = 'black', size=label.size)
+
+  p<-p+coord_polar(theta="y")
+  p<-p+theme(axis.text = element_blank()
+             ,axis.ticks = element_blank()
+             ,panel.grid  = element_blank())
+
+  p<-p+labs(title = type.title.str, x='',y='')
+
+  if(is.null(segment.cols) == FALSE)
+  {
+    p<-p + scale_fill_manual(name=segment.name, breaks=segment.breaks,values = segment.cols )
+  }
+
+  return(p)
 }
-
-
 
 #' Wrapper function for plotting ggplot2 PDFs
 #' @param plot.filename - the filename for the plot
@@ -624,14 +625,14 @@ ProducePlot<-function(filename,plot.obj,page.size='A4',landscape=TRUE)
   return(msg)
 }
 
-#' Wrapper function for plotting ggplot2 graphics
-#' @param plot.folder - where to put the plot
+#' Wrapper function for plotting ggplot2 in a more general output format
+#' @param plot.folder - output area for the plt
 #' @param plot.filename - the filename for the plot
 #' @param plot.obj - a ggplot2 object
-#' @param plot.width=NULL - used to specify width
-#' @param plot.height=NULL - used to specify height
-#' @param units='in' - inches
-#' @param res=72 - this gives a small file by default
+#' @param plot.width - used to specify page size
+#' @param plot.height - used to specify page size
+#' @param unit='in' - defaults to inches
+#' @param res=600 used by png output
 #' @export
 #' @examples
 #' \dontrun{
@@ -648,10 +649,12 @@ ProducePlot<-function(filename,plot.obj,page.size='A4',landscape=TRUE)
 #'
 #'print(p)
 #'
+#'plot.dir <- './'
 #'file.name<-'A good file name.pdf'
 #'OutputPlotForPaper(file.name,plot.obj=p)
 #' }
-OutputPlotForPaper<-function(plot.folder='./',filename,plot.obj=NULL,plot.width=NULL,plot.height=NULL,units='in',res = 600)
+OutputPlotForPaper<-function(plot.dir,plot.folder,filename,plot.obj=NULL
+                             ,plot.width=NULL,plot.height=NULL,units='in',res = 600)
 {
     if(is.null(plot.obj))
     {
@@ -659,18 +662,19 @@ OutputPlotForPaper<-function(plot.folder='./',filename,plot.obj=NULL,plot.width=
         print(msg)
         return
     }
-    
+
     if(is.null(plot.width))
     {
         plot.width<-297/25.4
     }
-    
+
     if(is.null(plot.height))
     {
         plot.height<-210/25.4
     }
-    
+
     num.chars <- nchar(filename)
+
     plot.type <- stringr::str_to_lower(substr(filename,num.chars-3,num.chars))
     
     full.path <- paste0(plot.folder,'/',filename)
@@ -682,13 +686,17 @@ OutputPlotForPaper<-function(plot.folder='./',filename,plot.obj=NULL,plot.width=
     else if (plot.type == '.png')
     {
         png(filename = full.path, width = plot.width, height = plot.height, units = 'in',res = res)
+        
         print(plot.obj)
+        
         dev.off()
     }
     else if (plot.type == '.eps')
     {
         postscript(file = full.path, width = plot.width, height = plot.height)
+
         print(plot.obj)
+        
         dev.off()
     }
     else
@@ -696,8 +704,56 @@ OutputPlotForPaper<-function(plot.folder='./',filename,plot.obj=NULL,plot.width=
         msg <- paste0('Unknown plot.type: ',plot.type)
         
         ProducePlot(full.path, plot.obj = plot.obj)
+
     }
 }
+
+#' Wrapper function for checking an MD5
+#' @param filename - the filename for the file to check
+#' @param MD5 - the expected MD5
+#' @param stop.program=TRUE - what happens if it fails
+#' @export
+#' @examples
+#' \dontrun{
+
+#'
+#' data.dir <- './data'
+#' data.set.filename <- 'A-File-To-Check.csv'
+#' full.path <- paste0(data.dir,'/',data.set.filename)
+#'
+#'VerifyMD5(full.path,'3363CFFB842AB858F425D5E3DC546BF4')
+#'
+#' }
+VerifyMD5<-function(full.path,MD5,stop.program=TRUE)
+{
+  verify.status <- FALSE
+
+  if(file.exists(full.path))
+  {
+    check.MD5 <- MD5_thisFile(full.path,writeMD5File = FALSE)
+    if( check.MD5 != MD5)
+    {
+      msg <- paste0('MD5 Fail for: ',full.path)
+      #print(msg)
+      stop(msg)
+    }
+    else
+    {
+      print('Good to Go!')
+      verify.status <- TRUE
+    }
+  }
+  else
+  {
+    msg <- paste0('File does not exist: Check: ',full.path)
+    #print(msg)
+    stop(msg)
+  }
+
+  # invisible() stops the echo of the return value on the console
+  return(invisible(verify.status))
+}
+
 
 
 # internal function
